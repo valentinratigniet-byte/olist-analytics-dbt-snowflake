@@ -38,6 +38,15 @@ dbt docs generate && dbt docs serve
 
 Nécessite un `~/.dbt/profiles.yml` avec les identifiants Snowflake (non versionné — voir `dbt_project.yml` pour le nom de profil attendu).
 
+## Orchestration (Prefect)
+
+`orchestration/flow.py` enchaîne `dbt deps → seed → run → test → snapshot` avec retries et logs structurés — même pattern que [projet-10-pipeline-elt](https://github.com/valentinratigniet-byte/projet-10-pipeline-elt).
+
+```bash
+pip install -r requirements.txt
+python orchestration/flow.py
+```
+
 ### Resources
 - [dbt docs](https://docs.getdbt.com/docs/introduction)
 - Vidéo source : [Cours complet DBT | Projet ELT complet](https://www.youtube.com/watch?v=NT9WII_rHdE) — Le Decodeur

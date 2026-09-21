@@ -1,0 +1,2 @@
+dbt-snowflake>=1.12,<2.0
+prefect>=2.14
