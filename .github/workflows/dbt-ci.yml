@@ -1,0 +1,54 @@
+name: dbt CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  dbt-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dbt
+        run: pip install dbt-snowflake
+
+      - name: Configure dbt profile
+        env:
+          SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
+        run: |
+          mkdir -p ~/.dbt
+          cat > ~/.dbt/profiles.yml <<EOF
+          olist_analytics:
+            outputs:
+              dev:
+                type: snowflake
+                account: efqprjb-so81956
+                user: valentinratigniet@gmail.com
+                password: "${SNOWFLAKE_PASSWORD}"
+                role: TRANSFORM
+                database: OLIST
+                warehouse: TRANSFORM_WH
+                schema: dev
+                threads: 4
+            target: dev
+          EOF
+
+      - name: dbt deps
+        run: dbt deps
+
+      - name: dbt seed
+        run: dbt seed
+
+      - name: dbt build
+        run: dbt build
+
+      - name: dbt snapshot
+        run: dbt snapshot
