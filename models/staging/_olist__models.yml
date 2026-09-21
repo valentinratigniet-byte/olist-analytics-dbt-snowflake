@@ -1,0 +1,28 @@
+version: 2
+
+models:
+  - name: stg_olist__orders
+    description: "Commandes nettoyées — une ligne par commande"
+    columns:
+      - name: order_id
+        tests: [unique, not_null]
+      - name: customer_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_olist__customers')
+                field: customer_id
+      - name: order_status
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['created', 'approved', 'invoiced', 'processing', 'shipped',
+                         'delivered', 'unavailable', 'canceled']
+
+  - name: stg_olist__order_items
+    columns:
+      - name: order_id
+        tests: [not_null]
+      - name: product_id
+        tests: [not_null]
