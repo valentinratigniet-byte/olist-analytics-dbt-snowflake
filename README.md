@@ -21,7 +21,19 @@ Amazon S3 (stockage brut) → Snowflake (entrepôt) → dbt-core 1.12 + dbt-snow
 - 16 modèles dbt, 8 sources RAW
 - 25/25 tests dbt (génériques + singulier) PASS
 - 1 snapshot SCD2 (`orders_snapshot`, historisation du statut de commande)
-- CI GitHub Actions : `dbt deps && dbt seed && dbt build && dbt snapshot` à chaque push sur `main`
+- Exécution réelle sur Snowflake (compte d'essai, septembre 2026) : `dbt seed && dbt build && dbt snapshot`, 25/25 PASS
+- CI GitHub Actions : `dbt parse` à chaque push (graphe, refs, sources et tests validés sans connexion — le compte
+  d'essai impose la MFA et n'est pas permanent, la CI ne dépend donc pas de lui)
+
+## Ce que j'ai ajouté par rapport au tutoriel
+
+Le tutoriel fournit la démarche ; ces points sont des choix personnels :
+
+- **Nommage normalisé** `stg_olist__<table>` partout (le tutoriel mélange simple et double underscore).
+- **Erreurs de saisie des DDL sources** (`SELLER_ZIPE_CODE_PREFIX`, `PRODUCT_LENGHT_CM`) corrigées par renommage en
+  staging plutôt qu'en base : la source reste intacte, la correction est tracée dans le code.
+- **Orchestration Prefect** (`orchestration/flow.py`, retries + logs) et **CI GitHub Actions**, absentes du tutoriel.
+- **Documentation dbt publiée** (graphe de lignage) en site statique dans `docs/`.
 
 ## Lancer le projet
 
